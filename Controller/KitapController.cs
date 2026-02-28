@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using kutuphaneApi2.Data;
 using kutuphaneApi2.Models;
+using kutuphaneApi2.Services;
 
 namespace kutuphaneApi2.Controllers
 {
@@ -9,17 +8,24 @@ namespace kutuphaneApi2.Controllers
     [ApiController]
     public class KitapController : ControllerBase
     {
-        private readonly UygulamaDbContext _context;
-        public KitapController(UygulamaDbContext context) { _context = context; }
+        private readonly IKitapService _kitapService;
+
+        public KitapController(IKitapService kitapService)
+        {
+            _kitapService = kitapService;
+        }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Kitap>>> GetKitaplar() => await _context.Kitaplar.Include(k => k.Yazar).ToListAsync();
+        public async Task<ActionResult<IEnumerable<Kitap>>> GetKitaplar()
+        {
+            var kitaplar = await _kitapService.TumKitaplariGetirAsync();
+            return Ok(kitaplar);
+        }
 
         [HttpPost]
         public async Task<ActionResult<Kitap>> PostKitap(Kitap kitap)
         {
-            _context.Kitaplar.Add(kitap);
-            await _context.SaveChangesAsync();
+            await _kitapService.KitapEkleAsync(kitap);
             return CreatedAtAction(nameof(GetKitaplar), new { id = kitap.Id }, kitap);
         }
 
@@ -27,18 +33,14 @@ namespace kutuphaneApi2.Controllers
         public async Task<IActionResult> PutKitap(int id, Kitap kitap)
         {
             if (id != kitap.Id) return BadRequest();
-            _context.Entry(kitap).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _kitapService.KitapGuncelleAsync(kitap);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteKitap(int id)
         {
-            var kitap = await _context.Kitaplar.FindAsync(id);
-            if (kitap == null) return NotFound();
-            _context.Kitaplar.Remove(kitap);
-            await _context.SaveChangesAsync();
+            await _kitapService.KitapSilAsync(id);
             return NoContent();
         }
     }

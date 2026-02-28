@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using kutuphaneApi2.Data;
+using kutuphaneApi2.Services;
 
 namespace kutuphaneApi2.Controllers
 {
@@ -7,24 +7,18 @@ namespace kutuphaneApi2.Controllers
     [ApiController]
     public class IstatistikController : ControllerBase
     {
-        private readonly UygulamaDbContext _context;
+        private readonly IIstatistikService _istatistikService;
 
-        public IstatistikController(UygulamaDbContext context)
+        public IstatistikController(IIstatistikService istatistikService)
         {
-            _context = context;
+            _istatistikService = istatistikService;
         }
 
         [HttpGet("ozet")]
-        public IActionResult GetOzet()
+        public async Task<IActionResult> GetOzet()
         {
-            var ozet = new
-            {
-                KitapSayisi = _context.Kitaplar.Count(),
-                YazarSayisi = _context.Yazarlar.Count(),
-                UyeSayisi = _context.Uyeler.Count(),
-                DisaridakiKitaplar = _context.OduncIslemler.Count(x => x.IadeTarihi == null)
-            };
-            return Ok(ozet);
+            var sonuc = await _istatistikService.GetOzetAsync();
+            return Ok(sonuc);
         }
     }
 }

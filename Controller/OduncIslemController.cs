@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using kutuphaneApi2.Data;
 using kutuphaneApi2.Models;
+using kutuphaneApi2.Services;
 
 namespace kutuphaneApi2.Controllers
 {
@@ -9,53 +8,40 @@ namespace kutuphaneApi2.Controllers
     [ApiController]
     public class OduncIslemController : ControllerBase
     {
-        private readonly UygulamaDbContext _context;
-        public OduncIslemController(UygulamaDbContext context) { _context = context; }
+        private readonly IOduncIslemService _oduncIslemService;
 
-        // 1. TÜM İŞLEMLERİ LİSTELE (Paneldeki tablo için)
+        public OduncIslemController(IOduncIslemService oduncIslemService)
+        {
+            _oduncIslemService = oduncIslemService;
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OduncIslem>>> GetIslemler()
         {
-            return await _context.OduncIslemler
-                .Include(i => i.Kitap)
-                .Include(i => i.Uye)
-                .ToListAsync();
+            var islemler = await _oduncIslemService.TumIslemleriGetirAsync();
+            return Ok(islemler);
         }
 
-        // 2. ÖDÜNÇ VER (POST)
         [HttpPost("odunc-ver")]
         public async Task<IActionResult> OduncVer(OduncIslem islem)
         {
-            // Kitabı bul
-            var kitap = await _context.Kitaplar.FindAsync(islem.KitapId);
-            if (kitap == null || !kitap.MevcutMu) return BadRequest("Kitap şu an müsait değil!");
+            var sonuc = await _oduncIslemService.OduncVerAsync(islem);
 
-            // Kitabı dışarıda olarak işaretle
-            kitap.MevcutMu = false;
+            if (sonuc.Contains("değil"))
+                return BadRequest(new { mesaj = sonuc });
 
-            islem.VerilisTarihi = DateTime.Now;
-            islem.IadeTarihi = null; // Henüz iade edilmedi
-
-            _context.OduncIslemler.Add(islem);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { mesaj = "Kitap başarıyla ödünç verildi." });
+            return Ok(new { mesaj = sonuc });
         }
 
-        // 3. İADE AL (PUT)
         [HttpPut("iade-al/{id}")]
         public async Task<IActionResult> IadeAl(int id)
         {
-            var islem = await _context.OduncIslemler.Include(i => i.Kitap).FirstOrDefaultAsync(x => x.Id == id);
-            if (islem == null) return NotFound();
+            var sonuc = await _oduncIslemService.IadeAlAsync(id);
 
-            // Kitabı tekrar müsait yap
-            if (islem.Kitap != null) islem.Kitap.MevcutMu = true;
+            if (sonuc.Contains("bulunamadı"))
+                return NotFound(new { mesaj = sonuc });
 
-            islem.IadeTarihi = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-            return Ok(new { mesaj = "Kitap iade alındı." });
+            return Ok(new { mesaj = sonuc });
         }
     }
 }
