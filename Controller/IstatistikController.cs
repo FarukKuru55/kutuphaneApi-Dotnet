@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using kutuphaneApi2.Services;
+using kutuphaneApi2.Interfaces;
 
 namespace kutuphaneApi2.Controllers
 {

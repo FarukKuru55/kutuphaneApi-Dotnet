@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using kutuphaneApi2.Data;
+using kutuphaneApi2.Interfaces;
 
 namespace kutuphaneApi2.Services
 {

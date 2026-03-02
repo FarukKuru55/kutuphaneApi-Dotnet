@@ -12,8 +12,7 @@ namespace kutuphaneApi2.Models
         public string Baslik { get; set; } = string.Empty;
 
         public bool MevcutMu { get; set; } = true;
-
-        // Foreign Key: Bu kitap hangi yazara ait?
+         
         public int YazarId { get; set; }
 
         [ForeignKey("YazarId")]

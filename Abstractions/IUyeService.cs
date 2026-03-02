@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace kutuphaneApi2.Services
+namespace kutuphaneApi2.Interfaces
 {
     public interface IUyeService
     {
@@ -12,4 +12,4 @@ namespace kutuphaneApi2.Services
         Task UyeGuncelleAsync(Uye uye);
         Task UyeSilAsync(int id);
     }
-}
+} 

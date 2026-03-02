@@ -1,6 +1,6 @@
 ﻿using kutuphaneApi2.Models;
 
-namespace kutuphaneApi2.Services
+namespace kutuphaneApi2.Interfaces
 {
     public interface IYazarService
     {

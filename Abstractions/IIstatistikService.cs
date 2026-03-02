@@ -1,4 +1,4 @@
-﻿namespace kutuphaneApi2.Services
+﻿namespace kutuphaneApi2.Interfaces
 {
     public interface IIstatistikService
     {
