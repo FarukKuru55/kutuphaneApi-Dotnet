@@ -12,16 +12,26 @@ namespace kutuphaneApi2.Services
             _context = context;
         }
 
-        public async Task<object> GetOzetAsync()
+        public async Task<IstatistikDto> GetIstatistikAsync()
         {
-            var ozet = new
+            return new IstatistikDto
             {
                 KitapSayisi = await _context.Kitaplar.CountAsync(),
                 YazarSayisi = await _context.Yazarlar.CountAsync(),
                 UyeSayisi = await _context.Uyeler.CountAsync(),
-                DisaridakiKitaplar = await _context.OduncIslemler.CountAsync(x => x.IadeTarihi == null)
+                OduncSayisi = await _context.OduncIslemler.CountAsync(x => x.IadeTarihi == null)
             };
-            return ozet;
+        }
+
+        public async Task<IstatistikDto> GetIstatistikAsync()
+        {
+            return new IstatistikDto
+            {
+                KitapSayisi = await _context.Kitaplar.CountAsync(),
+                YazarSayisi = await _context.Yazarlar.CountAsync(),
+                UyeSayisi = await _context.Uyeler.CountAsync(),
+                OduncSayisi = await _context.OduncIslemler.CountAsync(x => x.IadeTarihi == null)
+            };
         }
     }
 }

@@ -42,7 +42,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowReactApp");
 app.UseHttpsRedirection();
-app.UseAuthorization(); // Bu satýrý eklemek iyidir [cite: 2025-12-06]
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

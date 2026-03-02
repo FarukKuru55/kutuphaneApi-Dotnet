@@ -44,5 +44,17 @@ namespace kutuphaneApi2.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task KitapSilAsync(int id)
+        {
+            var kitap = awai _context.Kitaplar.FindAsync(id);
+
+            if (kitap != null && !kitap.MevcutMu)
+            {
+                throw new Exception("⚠️ Bu kitap şu an bir üyede ödünç durumda! Önce iade alınması gerekiyor.");
+            }
+            _context.Kitaplar.Remove(kitap)
+                await _context.SaveChangesAsync();
+        }
     }
 }

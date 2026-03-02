@@ -14,10 +14,11 @@ namespace kutuphaneApi2.Controllers
             _istatistikService = istatistikService;
         }
 
-        [HttpGet("ozet")]
-        public async Task<IActionResult> GetOzet()
+        [HttpGet]
+        public async Task<IActionResult> GetIstatistik()
         {
-            var sonuc = await _istatistikService.GetOzetAsync();
+       
+            var sonuc = await _istatistikService.GetIstatistikAsync();
             return Ok(sonuc);
         }
     }
